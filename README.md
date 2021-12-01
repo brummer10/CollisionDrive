@@ -1,5 +1,5 @@
 # CollisionDrive.lv2
-High Gain Amplifier
+Overdrive/Distortion
 
 ![CollisionDrive](https://github.com/brummer10/CollisionDrive/blob/main/CollisionDrive.png?raw=true)
 
