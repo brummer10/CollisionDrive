@@ -169,7 +169,7 @@ void plugin_create_controller_widgets(X11_UI *ui, const char * plugin_uri, float
     ui->private_ptr = ps;
     ps->open = false;
     set_costum_theme(&ui->main);
-    ui->widget[0] = add_lv2_image_toggle (ui->widget[0], ui->win, 2, "", ui, 120,  270, 60 * scale, 71 * scale);
+    ui->widget[0] = add_lv2_image_toggle (ui->widget[0], ui->win, 2, "", ui, 120,  270, 60 * scale, 60 * scale);
     widget_get_png(ui->widget[0], LDVAR(footsw_png));
 
     ui->widget[1] = add_lv2_knob (ui->widget[1], ui->win, 3, "BRIGHT", ui, 165,  30, 60 * scale, 80 * scale);
