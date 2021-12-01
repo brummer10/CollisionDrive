@@ -1,7 +1,7 @@
 # CollisionDrive.lv2
 High Gain Amplifier
 
-![CollisionDrive](https://github.com/brummer10/CollisionDrive.lv2/raw/master/CollisionDrive.png)
+![CollisionDrive](https://github.com/brummer10/CollisionDrive/raw/master/CollisionDrive.png)
 
 
 ## Features
