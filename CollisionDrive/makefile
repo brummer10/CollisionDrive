@@ -41,9 +41,10 @@
 	RESOURCES_LIB := $(notdir $(patsubst %.png,%.a,$(RESOURCES)))
 	RESOURCE_EXTLD := $(notdir $(patsubst %.png,%_png,$(RESOURCES)))
 	RESOURCEHEADER := xresources.h
-	LDFLAGS += -fvisibility=hidden -Wl,-Bstatic `pkg-config --cflags --libs xputty` \
-	-Wl,-Bdynamic `pkg-config --cflags --libs cairo x11 lilv-0` \
-	-shared -lm -fPIC -Wl,-z,noexecstack -Wl,--no-undefined -Wl,--gc-sections
+	GUI_LDFLAGS += -I$(HEADER_DIR) -Wl,-Bstatic -L. $(LIB_DIR)libxputty.a  \
+	-Wl,-Bdynamic `pkg-config --cflags --libs cairo x11` 
+	LDFLAGS += -fvisibility=hidden -shared -lm -fPIC \
+	-Wl,-z,noexecstack -Wl,--no-undefined -Wl,--gc-sections
 	CXXFLAGS += -I. -I./dsp -I./dsp/zita-resampler-1.1.0 \
 	-I./dsp/zita-resampler-1.1.0/zita-resampler -fPIC -DPIC -O2 -Wall -funroll-loops \
 	-fomit-frame-pointer -fstrength-reduce -fstack-protector -fvisibility=hidden \
@@ -89,9 +90,8 @@ endif
 
 $(EXEC_NAME):$(RESOURCES_OBJ)
 	@# use this line when you include libxputty as submodule
-	@$(CC) $(CFLAGS) '$(NAME).c' -L. $(RESOURCES_LIB) $(UI_LIB) -o '$(EXEC_NAME)_ui.so' $(LDFLAGS) -I./ -I$(HEADER_DIR)
+	$(CC) $(CFLAGS) '$(NAME).c' -L. $(RESOURCES_LIB) $(UI_LIB) -o '$(EXEC_NAME)_ui.so' $(LDFLAGS) $(GUI_LDFLAGS) -I./ 
 	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).so
-	$(CC)  $(CFLAGS) '$(NAME).c' -L. $(RESOURCES_LIB) -o '$(EXEC_NAME)_ui.so' $(LDFLAGS) -I./
 	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).so
 	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME)_ui.so
 
