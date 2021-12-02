@@ -24,7 +24,9 @@ ifeq (,$(filter $(NOGOAL),$(MAKECMDGOALS)))
 endif
 
 libxputty: check-and-reinit-submodules
+ifeq (,$(filter $(NOGOAL),$(MAKECMDGOALS)))
 	@exec $(MAKE) -j 1 -C $@ $(MAKECMDGOALS)
+endif
 
 $(SUBDIR): libxputty
 	@exec $(MAKE) -j 1 -C $@ $(MAKECMDGOALS)
