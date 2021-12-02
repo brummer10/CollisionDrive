@@ -1,0 +1,38 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<https://github.com/brummer10/CollisionDrive>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-collisiondrive.html> ;
+        modgui:stylesheet <modgui/stylesheet-collisiondrive.css> ;
+        modgui:screenshot <modgui/screenshot-collisiondrive.png> ;
+        modgui:thumbnail <modgui/thumbnail-collisiondrive.png> ;
+        modgui:brand "brummer" ;
+        modgui:label "CollisionDrive" ;
+        modgui:model "boxy" ;
+        modgui:panel "5-knobs" ;
+        modgui:color "black" ;
+        modgui:knob "black" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "LEVEL" ;
+            lv2:name "level" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "GATE" ;
+            lv2:name "gate" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "DRIVE" ;
+            lv2:name "drive" ;
+        ] , [
+            lv2:index 3 ;
+            lv2:symbol "ATTACK" ;
+            lv2:name "attack" ;
+        ] , [
+            lv2:index 4 ;
+            lv2:symbol "BRIGHT" ;
+            lv2:name "bright" ;
+        ] ;
+    ] .

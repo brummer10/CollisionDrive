@@ -180,7 +180,7 @@ void plugin_create_controller_widgets(X11_UI *ui, const char * plugin_uri, float
     widget_get_png(ui->widget[2], LDVAR(tune_png));
     ps->closed_knob = surface_get_png(ui->widget[2], ps->closed_knob, LDVAR(tune_blue_png));
     ui->widget[2]->func.expose_callback = draw_my_knob;
-    set_adjustment(ui->widget[2]->adj, -15.000, -15.000, -30.000, -10.000, 0.400, CL_CONTINUOS);
+    set_adjustment(ui->widget[2]->adj, -55.000, -55.000, -95.000, -10.000, 0.400, CL_CONTINUOS);
 
     ui->widget[3] = add_lv2_knob (ui->widget[3], ui->win, 5, "ATTACK", ui, 30,  120, 60 * scale, 80 * scale);
     widget_get_surface_ptr(ui->widget[3], ui->widget[1]);

@@ -52,17 +52,25 @@
 	CFLAGS := -O2 -D_FORTIFY_SOURCE=2 -Wall -fstack-protector -fvisibility=hidden \
 	-fdata-sections -Wl,--gc-sections -Wl,-z,relro,-z,now -Wl,--exclude-libs,ALL
 
-.PHONY : all install uninstall
+.PHONY : all mod install uninstall
 
 .NOTPARALLEL:
 
 all: $(RESOURCEHEADER) $(EXEC_NAME)
-
+	@rm -rf ./$(BUNDLE)
 	@mkdir -p ./$(BUNDLE)
 	@cp ./*.ttl ./$(BUNDLE)
 	@cp ./*.so ./$(BUNDLE)
 	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).so ]; then echo "build finish, now run make install"; \
 	else echo "sorry, build failed"; fi
+
+mod : clean nogui
+	@mkdir -p ./$(BUNDLE)
+	@cp -R ./MOD/* ./$(BUNDLE)
+	@mv ./*.so ./$(BUNDLE)
+	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).so ]; then echo $(BLUE)"build finish, now run make install"; \
+	else echo $(RED)"sorry, build failed"; fi
+	@echo $(NONE)
 
 $(RESOURCEHEADER): $(RESOURCES_OBJ)
 	rm -f $(RESOURCEHEADER)
@@ -94,6 +102,10 @@ $(EXEC_NAME):$(RESOURCES_OBJ)
 	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).so
 	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).so
 	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME)_ui.so
+
+nogui : clean
+	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).so
+	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).so
 
 install :
 ifneq ("$(wildcard ./$(BUNDLE))","")
