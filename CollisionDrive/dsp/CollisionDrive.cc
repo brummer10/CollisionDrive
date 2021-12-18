@@ -43,7 +43,9 @@ static double ftbl0mydspSIG0[6];
 
 class Dsp {
 private:
+#ifndef  __MOD_DEVICES__
 	gx_resample::FixedRateResampler smp;
+#endif
 	uint32_t sample_rate;
 	uint32_t fSampleRate;
 	float fHslider0;
@@ -95,10 +97,11 @@ private:
 	double fConst29;
 	double fConst30;
 	double fRec1[3];
+#ifndef  __MOD_DEVICES__
 	double lowpass_fVec0[2];
 	double lowpass_fRec1[2];
 	double lowpass_fRec0[3];
-
+#endif
 	void connect(uint32_t port,void* data);
 	void clear_state_f();
 	void init(uint32_t sample_rate);
@@ -113,8 +116,6 @@ public:
 	Dsp();
 	~Dsp();
 };
-
-
 
 Dsp::Dsp() {
 }
@@ -138,9 +139,11 @@ inline void Dsp::clear_state_f()
 	for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) fRec11[l11] = 0.0;
 	for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) fRec12[l12] = 0.0;
 	for (int l13 = 0; (l13 < 3); l13 = (l13 + 1)) fRec1[l13] = 0.0;
+#ifndef  __MOD_DEVICES__
 	for (int l0 = 0; (l0 < 2); l0 = (l0 + 1)) lowpass_fVec0[l0] = 0.0;
 	for (int l1 = 0; (l1 < 2); l1 = (l1 + 1)) lowpass_fRec1[l1] = 0.0;
 	for (int l2 = 0; (l2 < 3); l2 = (l2 + 1)) lowpass_fRec0[l2] = 0.0;
+#endif
 }
 
 void Dsp::clear_state_f_static(Dsp *p)
@@ -150,8 +153,12 @@ void Dsp::clear_state_f_static(Dsp *p)
 
 inline void Dsp::init(uint32_t RsamplingFreq)
 {
+#ifndef  __MOD_DEVICES__
 	sample_rate = 96000;
 	smp.setup(RsamplingFreq, sample_rate);
+#else
+	sample_rate = RsamplingFreq;
+#endif
 	mydspSIG0* sig0 = newmydspSIG0();
 	sig0->instanceInitmydspSIG0(sample_rate);
 	sig0->fillmydspSIG0(6, ftbl0mydspSIG0);
@@ -205,8 +212,15 @@ inline void Dsp::compute(int count, float *input0, float *output0)
 #define fHslider3 (*fHslider3_)
 #define fVslider0 (*fVslider0_)
 #define fCheck0 (*fCheck0_)
+#ifndef  __MOD_DEVICES__
 	float buf[smp.max_out_count(count)];
 	int ReCount = smp.up(count, input0, buf);
+#else
+	if(output0 != input0)
+		memcpy(output0, input0, count*sizeof(float));
+	float* buf = output0;
+	int ReCount = count;
+#endif
 	double fSlow0 = (0.0070000000000000062 * std::pow(10.0, (0.050000000000000003 * double(fHslider0))));
 	double fSlow1 = std::pow(10.0, (0.050000000000000003 * double(fHslider1)));
 	double fSlow2 = ftbl0mydspSIG0[int(double(fHslider2))];
@@ -263,19 +277,21 @@ inline void Dsp::compute(int count, float *input0, float *output0)
 		fRec1[2] = fRec1[1];
 		fRec1[1] = fRec1[0];
 	}
+#ifndef  __MOD_DEVICES__
 	for (int i0 = 0; (i0 < ReCount); i0 = (i0 + 1)) {
-		double lowpass_fTemp0 = double(output0[i0]);
+		double lowpass_fTemp0 = double(buf[i0]);
 		lowpass_fVec0[0] = lowpass_fTemp0;
 		lowpass_fRec1[0] = ((lowpass_fTemp0 + lowpass_fVec0[1]) - (0.99999999999999989 * lowpass_fRec1[1]));
 		double lowpass_fTemp1 = (2.0 * lowpass_fRec0[1]);
 		lowpass_fRec0[0] = (lowpass_fRec1[0] - (lowpass_fTemp1 + (0.99999999999999989 * lowpass_fRec0[2])));
-		output0[i0] = float((lowpass_fRec0[2] + (lowpass_fRec0[0] + lowpass_fTemp1)));
+		buf[i0] = float((lowpass_fRec0[2] + (lowpass_fRec0[0] + lowpass_fTemp1)));
 		lowpass_fVec0[1] = lowpass_fVec0[0];
 		lowpass_fRec1[1] = lowpass_fRec1[0];
 		lowpass_fRec0[2] = lowpass_fRec0[1];
 		lowpass_fRec0[1] = lowpass_fRec0[0];
 	}
 	smp.down(buf, output0);
+#endif
 #undef fHslider0
 #undef fHslider1
 #undef fVbargraph0

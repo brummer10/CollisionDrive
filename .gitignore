@@ -1,0 +1,5 @@
+*.a
+*.o
+*.lv2
+*.so
+CollisionDrive/xresources.h
