@@ -13,6 +13,12 @@ Overdrive/Distortion
 - libcairo2-dev
 - libx11-dev
 
+## Binary
+
+![example workflow](https://github.com/brummer10/CollisionDrive/actions/workflows/build.yml/badge.svg)
+
+[CollisionDrive.lv2.zip](https://github.com/brummer10/CollisionDrive/releases/download/Latest/CollisionDrive.lv2.zip)
+
 ## Build
 
 - git submodule init
