@@ -7,7 +7,7 @@
 
 #include <lv2.h>
 
-#ifndef  __MOD_DEVICES__
+#ifndef  _MOD_DEVICE_DUO
 #include "resampler.cc"
 #include "resampler-table.cc"
 #include "zita-resampler/resampler.h"
