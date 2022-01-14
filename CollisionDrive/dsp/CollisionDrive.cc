@@ -159,7 +159,7 @@ inline void Dsp::init(uint32_t RsamplingFreq)
 	fSampleRate = RsamplingFreq;
 #endif
 	mydspSIG0* sig0 = newmydspSIG0();
-	sig0->instanceInitmydspSIG0(sample_rate);
+	sig0->instanceInitmydspSIG0(fSampleRate);
 	sig0->fillmydspSIG0(6, ftbl0mydspSIG0);
 	deletemydspSIG0(sig0);
 	fConst0 = std::min<double>(192000.0, std::max<double>(1.0, double(fSampleRate)));
