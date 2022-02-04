@@ -1,0 +1,28 @@
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<default-preset>
+	a pset:Preset ;
+	lv2:appliesTo <https://github.com/brummer10/CollisionDrive> ;
+	lv2:port [
+		lv2:symbol "ATTACK" ;
+		pset:value 3.0
+	] , [
+		lv2:symbol "BRIGHT" ;
+		pset:value 0.5
+	] , [
+		lv2:symbol "BYPASS" ;
+		pset:value 1.0
+	] , [
+		lv2:symbol "DRIVE" ;
+		pset:value 0.1
+	] , [
+		lv2:symbol "GATE" ;
+		pset:value -55.0
+	] , [
+		lv2:symbol "LEVEL" ;
+		pset:value -10.0
+	] .
+

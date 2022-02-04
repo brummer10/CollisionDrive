@@ -1,8 +1,16 @@
 
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
+
 <https://github.com/brummer10/CollisionDrive>
     a lv2:Plugin ;
     lv2:binary <CollisionDrive.so> ;
     rdfs:seeAlso <CollisionDrive.ttl> .
 <https://github.com/brummer10/CollisionDrive> rdfs:seeAlso <modgui.ttl> .
+
+<default-preset>
+	a pset:Preset ;
+	lv2:appliesTo <https://github.com/brummer10/CollisionDrive> ;
+	rdfs:label "Default" ;
+	rdfs:seeAlso <default-preset.ttl> .
