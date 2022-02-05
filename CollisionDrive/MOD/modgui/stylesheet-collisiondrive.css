@@ -119,6 +119,18 @@
     z-index: 2;
 }
 
+.mod-collision-pedal{{{cns}}} .mod-knob .mod-knob-step-image {
+    background-image: url(/resources/knobs/boxy/black_6steps.png{{{ns}}});
+    background-position: left 0px;
+    background-repeat: no-repeat;
+    background-size: auto 61px;
+    height: 61px;
+    margin-top: 20px;
+    position: relative;
+    width: 61px;
+    z-index: 2;
+}
+
 .mod-collision-pedal{{{cns}}} .mod-knob .mod-knob-title {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 10px;
