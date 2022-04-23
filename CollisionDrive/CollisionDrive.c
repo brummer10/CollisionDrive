@@ -20,7 +20,7 @@ void set_costum_theme(Xputty *main) {
         .fg =       { 0.850, 0.850, 0.850, 1.000},
         .bg =       { 0.100, 0.100, 0.100, 1.000},
         .base =     { 0.000, 0.000, 0.000, 1.000},
-        .text =     { 0.900, 0.900, 0.900, 1.000},
+        .text =     { 0.00, 0.92, 0.95, 1.000},
         .shadow =   { 0.000, 0.000, 0.000, 0.200},
         .frame =    { 0.000, 0.000, 0.000, 1.000},
         .light =    { 0.100, 0.100, 0.100, 1.000}
@@ -156,8 +156,8 @@ void plugin_value_changed(X11_UI *ui, Widget_t *w, PortIndex index) {
 }
 
 void plugin_set_window_size(int *w,int *h,const char * plugin_uri, float scale) {
-    (*w) = 300 * scale; //set initial width of main window
-    (*h) = 381 * scale; //set initial height of main window
+    (*w) = 230 * scale; //set initial width of main window
+    (*h) = 431 * scale; //set initial height of main window
 }
 
 const char* plugin_set_name() {
@@ -169,32 +169,33 @@ void plugin_create_controller_widgets(X11_UI *ui, const char * plugin_uri, float
     ui->private_ptr = ps;
     ps->open = false;
     set_costum_theme(&ui->main);
-    ui->widget[0] = add_lv2_image_toggle (ui->widget[0], ui->win, 2, "", ui, 120,  270, 60 * scale, 60 * scale);
+    widget_get_png(ui->win, LDVAR(back_png));
+    ui->widget[0] = add_lv2_image_toggle (ui->widget[0], ui->win, 2, "", ui, 85,  310, 60 * scale, 60 * scale);
     widget_get_png(ui->widget[0], LDVAR(footsw_png));
 
-    ui->widget[1] = add_lv2_knob (ui->widget[1], ui->win, 3, "BRIGHT", ui, 165,  30, 60 * scale, 80 * scale);
-    widget_get_png(ui->widget[1], LDVAR(knob_black_1__png));
+    ui->widget[1] = add_lv2_knob (ui->widget[1], ui->win, 3, "BRIGHT", ui, 128,  30, 60 * scale, 80 * scale);
+    widget_get_png(ui->widget[1], LDVAR(black_png));
     set_adjustment(ui->widget[1]->adj, 0.500, 0.500, 0.000, 1.000, 0.010, CL_CONTINUOS);
 
-    ui->widget[2] = add_lv2_knob (ui->widget[2], ui->win, 4, "GATE", ui, 120,  135, 60 * scale, 80 * scale);
+    ui->widget[2] = add_lv2_knob (ui->widget[2], ui->win, 4, "GATE", ui, 85,  135, 60 * scale, 80 * scale);
     widget_get_png(ui->widget[2], LDVAR(tune_png));
     ps->closed_knob = surface_get_png(ui->widget[2], ps->closed_knob, LDVAR(tune_blue_png));
     ui->widget[2]->func.expose_callback = draw_my_knob;
     set_adjustment(ui->widget[2]->adj, -55.000, -55.000, -95.000, -10.000, 0.400, CL_CONTINUOS);
 
-    ui->widget[3] = add_lv2_knob (ui->widget[3], ui->win, 5, "ATTACK", ui, 30,  120, 60 * scale, 80 * scale);
+    ui->widget[3] = add_lv2_knob (ui->widget[3], ui->win, 5, "ATTACK", ui, 20,  120, 60 * scale, 80 * scale);
     widget_get_surface_ptr(ui->widget[3], ui->widget[1]);
     set_adjustment(ui->widget[3]->adj, 3.000, 3.000, 0.000, 5.000, 1.000, CL_CONTINUOS);
 
-    ui->widget[4] = add_lv2_knob (ui->widget[4], ui->win, 6, "DRIVE", ui, 210,  120, 60 * scale, 80 * scale);
+    ui->widget[4] = add_lv2_knob (ui->widget[4], ui->win, 6, "DRIVE", ui, 150,  120, 60 * scale, 80 * scale);
     widget_get_surface_ptr(ui->widget[4], ui->widget[1]);
     set_adjustment(ui->widget[4]->adj, 0.100, 0.100, 0.000, 1.000, 0.010, CL_CONTINUOS);
 
-    ui->widget[5] = add_lv2_knob (ui->widget[5], ui->win, 7, "LEVEL", ui, 75,  30, 60 * scale, 80 * scale);
+    ui->widget[5] = add_lv2_knob (ui->widget[5], ui->win, 7, "LEVEL", ui, 50,  30, 60 * scale, 80 * scale);
     widget_get_surface_ptr(ui->widget[5], ui->widget[1]);
     set_adjustment(ui->widget[5]->adj, -6.000, -6.000, -20.000, 4.000, 0.240, CL_CONTINUOS);
 
-    ui->widget[6] = add_lv2_image_toggle (ui->widget[6], ui->win, 2, "", ui, 128,  225, 44 * scale, 44 * scale);
+    ui->widget[6] = add_lv2_image_toggle (ui->widget[6], ui->win, 2, "", ui, 93,  265, 44 * scale, 44 * scale);
     widget_get_png(ui->widget[6], LDVAR(led_red_png));
 
 }
