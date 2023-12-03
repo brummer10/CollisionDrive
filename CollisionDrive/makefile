@@ -35,6 +35,48 @@
 	HEADER_DIR := $(LIB_DIR)include/
 	UI_LIB:= $(LIB_DIR)libxputty.a
 	STRIP ?= strip
+	# check OS specific stuff
+	OS := $(shell echo $$OS)
+	UNAME_S := $(shell uname -s)
+	# default library extension
+	LIB_EXT = so
+	# cross compilation (e.g.: PKG_CONFIG_PATH=/usr/local/pkgconfig make CROSS=x86_64-w64-mingw32- mod)
+	ifneq (,$(findstring mingw,$(CROSS)))
+		# Found
+		TARGET = Windows
+		STRIP = $(CROSS)strip
+		PKGCONFIG = $(CROSS)pkg-config
+		CC = $(CROSS)cc
+		CXX = $(CROSS)g++
+		LD = $(CROSS)ld
+	else ifneq (,$(findstring mingw,$(CXX)))
+		# Found
+		TARGET = Windows
+	else
+		# Not found
+		ifeq ($(UNAME_S), Linux) #LINUX
+			TARGET = Linux
+		endif
+		ifeq ($(OS), Windows_NT) #WINDOWS
+			TARGET = Windows
+		endif
+		ifeq ($(UNAME_S), Darwin) #APPLE
+			TARGET = Apple
+		endif
+	endif
+	ifeq ($(TARGET), Linux)
+		ABI_CFLAGS = -Wl,-z,nodelete
+		ABI_CXXFLAGS = -Wl,-z,relro,-z,now
+		ABI_LDFLAGS = -Wl,-z,noexecstack
+	endif
+	ifeq ($(TARGET), Windows)
+		ECHO += -e
+		ABI_LDFLAGS = -static -lpthread
+		GUI_LIBS = -liconv -lstdc++
+		PKGCONFIG_FLAGS = --static
+		TTLUPDATE = sed -i '/lv2:binary/ s/\.so/\.dll/ ' $(BUNDLE)/manifest.ttl
+		LIB_EXT = dll
+	endif
 
 	RESOURCES := $(wildcard $(RESOURCES_DIR)*.png)
 	RESOURCES_OBJ := $(notdir $(patsubst %.png,%.o,$(RESOURCES)))
@@ -44,7 +86,7 @@
 	GUI_LDFLAGS += -I$(HEADER_DIR) -Wl,-Bstatic -L. $(LIB_DIR)libxputty.a  \
 	-Wl,-Bdynamic `pkg-config --cflags --libs cairo x11` 
 	LDFLAGS += -fvisibility=hidden -shared -lm -fPIC \
-	-Wl,-z,noexecstack -Wl,--no-undefined -Wl,--gc-sections
+	$(ABI_LDFLAGS) -Wl,--no-undefined -Wl,--gc-sections
 	CXXFLAGS += -I. -I./dsp -I./dsp/zita-resampler-1.1.0 \
 	-I./dsp/zita-resampler-1.1.0/zita-resampler -fPIC -DPIC -O2 -Wall -funroll-loops \
 	-fomit-frame-pointer -fstrength-reduce -fstack-protector -fvisibility=hidden \
@@ -60,15 +102,16 @@ all: $(RESOURCEHEADER) $(EXEC_NAME)
 	@rm -rf ./$(BUNDLE)
 	@mkdir -p ./$(BUNDLE)
 	@cp ./*.ttl ./$(BUNDLE)
-	@cp ./*.so ./$(BUNDLE)
-	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).so ]; then echo "build finish, now run make install"; \
+	@cp ./*.$(LIB_EXT) ./$(BUNDLE)
+	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).$(LIB_EXT) ]; then echo "build finish, now run make install"; \
 	else echo "sorry, build failed"; fi
 
 mod : clean nogui
 	@mkdir -p ./$(BUNDLE)
 	@cp -R ./MOD/* ./$(BUNDLE)
-	@mv ./*.so ./$(BUNDLE)
-	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).so ]; then echo $(BLUE)"build finish, now run make install"; \
+	@mv ./*.$(LIB_EXT) ./$(BUNDLE)
+	$(TTLUPDATE)
+	@if [ -f ./$(BUNDLE)/$(EXEC_NAME).$(LIB_EXT) ]; then echo $(BLUE)"build finish, now run make install"; \
 	else echo $(RED)"sorry, build failed"; fi
 	@echo $(NONE)
 
@@ -98,14 +141,14 @@ endif
 
 $(EXEC_NAME):$(RESOURCES_OBJ)
 	@# use this line when you include libxputty as submodule
-	$(CC) $(CFLAGS) '$(NAME).c' -L. $(RESOURCES_LIB) $(UI_LIB) -o '$(EXEC_NAME)_ui.so' $(LDFLAGS) $(GUI_LDFLAGS) -I./ 
-	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).so
-	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).so
-	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME)_ui.so
+	$(CC) $(CFLAGS) '$(NAME).c' -L. $(RESOURCES_LIB) $(UI_LIB) -o '$(EXEC_NAME)_ui.$(LIB_EXT)' $(LDFLAGS) $(GUI_LDFLAGS) -I./ 
+	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).$(LIB_EXT)
+	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).$(LIB_EXT)
+	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME)_ui.$(LIB_EXT)
 
 nogui : clean
-	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).so
-	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).so
+	$(CXX) $(CXXFLAGS) $(EXEC_NAME).cpp $(LDFLAGS) -o $(EXEC_NAME).$(LIB_EXT)
+	$(STRIP) -s -x -X -R .comment -R .note.ABI-tag $(EXEC_NAME).$(LIB_EXT)
 
 install :
 ifneq ("$(wildcard ./$(BUNDLE))","")
@@ -121,6 +164,6 @@ uninstall :
 	@echo ". ., done"
 
 clean:
-	rm -f *.a *.o *.so xresources.h
+	rm -f *.a *.o *.$(LIB_EXT) xresources.h
 	@rm -rf ./$(BUNDLE)
 

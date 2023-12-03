@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
+#include <cstdint>
 
 #include <lv2.h>
 
